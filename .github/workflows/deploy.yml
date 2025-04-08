@@ -19,22 +19,22 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0 # Adjust to your Terraform version
+          terraform_version: 1.5.0
 
-      # Initialize Terraform
+      # Terraform Init
       - name: Terraform Init
         run: terraform init
 
-      # Validate Terraform configuration
+      # Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # Plan Terraform changes
+      # Terraform Plan
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=tfplan
 
-      # Apply Terraform changes (requires approval)
+      # Terraform Apply (only on main)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
