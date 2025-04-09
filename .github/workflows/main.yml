@@ -15,9 +15,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Find where your Terraform files are located
-      - name: List files (for debugging)
-        run: ls -R
+      # Create Terraform configuration file
+      - name: Create Terraform configuration
+        run: |
+          echo 'provider "aws" { region = "us-west-2" }' > main.tf
+          echo 'resource "aws_s3_bucket" "my_bucket" { bucket = "my-unique-bucket-name" acl = "private" }' >> main.tf
+          echo 'output "bucket_name" { value = aws_s3_bucket.my_bucket.bucket }' >> main.tf
 
       # Setup Terraform CLI
       - name: Setup Terraform
@@ -25,33 +28,20 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      # Change to the directory containing your Terraform files if they're not in root
-      # - name: Change directory
-      #   run: cd path/to/terraform/files && echo "::set-output name=dir::$(pwd)"
-      #   id: change-dir
-
       # Terraform Init
       - name: Terraform Init
         run: terraform init
-        # If your files are in a subdirectory, use:
-        # run: cd path/to/terraform/files && terraform init
 
       # Terraform Validate
       - name: Terraform Validate
         run: terraform validate
-        # If your files are in a subdirectory, use:
-        # run: cd path/to/terraform/files && terraform validate
 
       # Terraform Plan
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=tfplan
-        # If your files are in a subdirectory, use:
-        # run: cd path/to/terraform/files && terraform plan -out=tfplan
 
-      # Terraform Apply (only on master)
+      # Terraform Apply (only on main)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'
         run: terraform apply -auto-approve tfplan
-        # If your files are in a subdirectory, use:
-        # run: cd path/to/terraform/files && terraform apply -auto-approve tfplan
