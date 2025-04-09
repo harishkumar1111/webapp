@@ -1,3 +1,6 @@
+Here is the indented code:
+
+```yaml
 name: Deploy with Terraform
 
 on:
@@ -19,6 +22,7 @@ jobs:
       - name: Generate Terraform config
         run: |
           cat <<EOF > main.tf
+          # Simple local file example (no cloud provider needed)
           resource "local_file" "test_file" {
             filename = "terraform_output.txt"
             content  = "This file was created by Terraform in GitHub Actions!"
@@ -50,9 +54,7 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
-      # Upload the created file as an artifact
-      - name: Upload Terraform Output
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: terraform_output
-          path: terraform_output.txt
+      # (Optional) Show the created file
+      - name: Display Terraform Output
+        run: cat terraform_output.txt
+```
