@@ -50,6 +50,9 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
-      # (Optional) Show the created file
-      - name: Display Terraform Output
-        run: cat terraform_output.txt
+      # Upload the created file as an artifact
+      - name: Upload Terraform Output
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform_output
+          path: terraform_output.txt
