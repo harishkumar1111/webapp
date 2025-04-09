@@ -19,7 +19,6 @@ jobs:
       - name: Generate Terraform config
         run: |
           cat <<EOF > main.tf
-          # Simple local file example (no cloud provider needed)
           resource "local_file" "test_file" {
             filename = "terraform_output.txt"
             content  = "This file was created by Terraform in GitHub Actions!"
