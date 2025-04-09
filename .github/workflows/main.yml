@@ -11,48 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # Create a simple Terraform config (local provider)
-      - name: Generate Terraform config
+      - name: Create Terraform config
         run: |
           cat <<EOF > main.tf
           resource "local_file" "test_file" {
             filename = "terraform_output.txt"
-            content  = "This file was created by Terraform in GitHub Actions!"
-          }
-
-          output "file_message" {
-            value = local_file.test_file.content
+            content  = "Created at $(date)"
           }
           EOF
 
-      # Setup Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0
 
-      # Initialize & validate
-      - name: Terraform Init
-        run: terraform init
+      - run: terraform init
+      - run: terraform validate
+      - run: terraform apply -auto-approve
 
-      - name: Terraform Validate
-        run: terraform validate
+      - name: Verify file creation
+        run: |
+          echo "File contents:"
+          cat terraform_output.txt
+          echo "\nDirectory listing:"
+          ls -la
 
-      # Plan and Apply
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -out=tfplan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
-
-      # Upload the created file as an artifact
-      - name: Upload Terraform Output
-        uses: actions/upload-artifact@v2.2.4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: terraform_output
+          name: terraform-output
           path: terraform_output.txt
