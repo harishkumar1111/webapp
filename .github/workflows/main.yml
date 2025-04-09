@@ -1,6 +1,6 @@
 Here is the indented code:
 
-```yaml
+
 name: Deploy with Terraform
 
 on:
